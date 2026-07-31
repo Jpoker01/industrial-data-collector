@@ -4,14 +4,15 @@ services:
   mongo: 
     image: mongo:8.3
     container_name: mongo-db
-    restart: unless_stopped
+    restart: unless-stopped
     ports: ["27017:27017"]
     networks: ["backend"]
     volumes: ["mongo_data:/data/db"]
+  
   postgres:
     image: postgres:18.4
     container_name: postgres-db
-    restart: unless_stopped
+    restart: unless-stopped
     ports: ["5432:5432"]
     networks: ["backend"]
     volumes: ["postgres_data:/data/db"]
@@ -19,10 +20,11 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+
   mosquitto:
-    image: mosquitto:2.1.2
+    image: eclipse-mosquitto:2
     container_name: mosquitto
-    restart: unless_stopped
+    restart: unless-stopped
     ports: ["1883:1883"]
     networks: ["backend"]
     volumes: ["mosquitto_data:/mosquitto/data", "./mosquitto/config:/mosquitto/config"]
@@ -31,7 +33,7 @@ services:
 volumes:
   mongo_data:
   postgres_data:
-  mosquito_data:
+  mosquitto_data:
 
 networks:
   backend:
