@@ -1,0 +1,21 @@
+#env files
+.env
+
+#certificates for security
+certs/*.key
+certs/*.crt
+certs/*.csr
+certs/*.srl
+
+#mosquitto password
+mosquitto/config/passwd
+
+#python cache
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+
+# vscode metadata
+.vscode/
