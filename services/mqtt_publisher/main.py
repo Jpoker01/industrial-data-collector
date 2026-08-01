@@ -1,17 +1,45 @@
 import json
+import os
+import time
+import logging
+
 import paho.mqtt.client as mqtt
 
 from common.data_source import fetch_price
 
-client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="pub-1")
-client.connect("localhost", 1883)
+
+logger = logging.getLogger(__name__)
+
+#env variables
+CLIENT_ID = os.getenv("CLIENT_ID", "pub-1")
+BROKER_HOST = os.getenv("BROKER_HOST", "localhost")
+BROKER_PORT = int(os.getenv("BROKER_PORT", "1883"))
+PUBLISH_INTERVAL = int(os.getenv("PUBLISH_INTERVAL", "5"))
+PAIR = os.getenv("PAIR", "BTC-USD")
+TOPIC = f"telemetry/{CLIENT_ID}/crypto"
+
+def connect_to_broker(client, host, port):
+    try:
+        client.connect(host, port, keepalive=60)
+    except OSError as exc:
+        logger.warning("Could not reach broker (%s)", exc)
+
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=CLIENT_ID)
+connect_to_broker(client, BROKER_HOST, BROKER_PORT)
 client.loop_start()
 
-reading = fetch_price("BTC-USD")
-message = json.dumps(reading)
-result = client.publish("telemetry/pub-1/crypto", message)
-result.wait_for_publish()
-print("Published!")
-
-client.loop_stop()
-client.disconnect()
+try:
+    while True:
+        reading = fetch_price(PAIR)
+        if reading is None:
+            print("No data this cycle; skipping")
+        else:
+            message = json.dumps(reading)
+            client.publish(TOPIC, message)
+            print(f"Published: {message}")
+        time.sleep(PUBLISH_INTERVAL)
+except KeyboardInterrupt:
+    print("Stopping")
+finally:
+    client.loop_stop()
+    client.disconnect()
