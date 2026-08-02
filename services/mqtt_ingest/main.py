@@ -17,7 +17,7 @@ BROKER_PORT = int(os.getenv("BROKER_PORT", "1883"))
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 MONGO_DB = os.getenv("MONGO_DB", "iot")
 MONGO_COLLECTION = os.getenv("MONGO_COLLECTION", "mqtt_measurements")
-TELEMETRY_TOPIC = "telemetry/#"
+TOPIC = os.getenv("TOPIC", "telemetry/#")
 
 mongo = MongoClient(MONGO_URI)
 collection = mongo[MONGO_DB][MONGO_COLLECTION]
@@ -46,7 +46,7 @@ def main():
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="mqtt-ingest")
     client.on_message = on_message
     connect_to_broker(client, BROKER_HOST, BROKER_PORT)
-    client.subscribe(TELEMETRY_TOPIC)
+    client.subscribe(TOPIC)
     client.loop_forever()
 
 

@@ -17,8 +17,9 @@ BROKER_HOST = os.getenv("BROKER_HOST", "localhost")
 BROKER_PORT = int(os.getenv("BROKER_PORT", "1883"))
 PUBLISH_INTERVAL = int(os.getenv("PUBLISH_INTERVAL", "5"))
 PAIR = os.getenv("PAIR", "BTC-USD")
+TOPIC_CATEGORY = os.getenv("TOPIC_CATEGORY", "crypto")
+TOPIC = f"telemetry/{CLIENT_ID}/{TOPIC_CATEGORY}"
 
-TOPIC = f"telemetry/{CLIENT_ID}/crypto"
 COMMAND_TOPIC = f"commands/{CLIENT_ID}"
 
 publishing_enabled = True
@@ -43,8 +44,6 @@ def on_message(client, userdata, msg):
 def main():
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=CLIENT_ID)
     client.on_message = on_message
-    connect_to_broker(client, BROKER_HOST, BROKER_PORT)
-
     connect_to_broker(client, BROKER_HOST, BROKER_PORT)
     client.subscribe(COMMAND_TOPIC)
     client.loop_start()

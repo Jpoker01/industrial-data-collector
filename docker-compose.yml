@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
     ports: ["5432:5432"]
     networks: ["backend"]
-    volumes: ["postgres_data:/data/db"]
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -29,6 +29,50 @@ services:
     networks: ["backend"]
     volumes: ["mosquitto_data:/mosquitto/data", "./mosquitto/config:/mosquitto/config"]
 
+  mqtt-pub-1:
+    build: ./services
+    container_name: idc-mqtt-pub-1
+    restart: unless-stopped
+    command: python -u -m mqtt_publisher.main
+    environment:
+      CLIENT_ID: pub-1
+      PAIR: BTC-USD
+      PUBLISH_INTERVAL: "5"
+      BROKER_HOST: mosquitto
+      BROKER_PORT: "1883"
+      TOPIC_CATEGORY: "crypto"
+    depends_on: [mosquitto]
+    networks: [backend]
+
+  mqtt-pub-2:
+    build: ./services
+    container_name: idc-mqtt-pub-2
+    restart: unless-stopped
+    command: python -u -m mqtt_publisher.main
+    environment:
+      CLIENT_ID: pub-2
+      PAIR: ETH-USD
+      PUBLISH_INTERVAL: "7"
+      BROKER_HOST: mosquitto
+      BROKER_PORT: "1883"
+      TOPIC_CATEGORY: "crypto"
+    depends_on: [mosquitto]
+    networks: [backend]
+
+  mqtt-ingest:
+    build: ./services
+    container_name: idc-mqtt-ingest
+    restart: unless-stopped
+    command: python -u -m mqtt_ingest.main
+    environment:
+      BROKER_HOST: mosquitto
+      BROKER_PORT: "1883"
+      MONGO_URI: mongodb://mongo:27017
+      MONGO_DB: iot
+      MONGO_COLLECTION: "mqtt_measurements"
+      TOPIC: "telemetry/#"
+    depends_on: [mosquitto, mongo]
+    networks: [backend]
 
 volumes:
   mongo_data:
