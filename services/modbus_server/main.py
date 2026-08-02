@@ -22,13 +22,14 @@ LISTEN_PORT = int(os.getenv("LISTEN_PORT", "5020"))
 UPDATE_INTERVAL = int(os.getenv("UPDATE_INTERVAL", "5"))
 PAIR = os.getenv("PAIR", "BTC-USD")
 
+
 FLOAT32 = ModbusTcpClient.DATATYPE.FLOAT32
 
 store = ModbusDeviceContext(
     hr=ModbusSequentialDataBlock(0, [0] * 100),
     zero_mode=True,
 )
-context = ModbusServerContext(slaves=store, single=True)
+context = ModbusServerContext(store, single=True)  
 
 
 def update_registers():
