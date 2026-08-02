@@ -24,7 +24,7 @@ PAIR = os.getenv("PAIR", "BTC-USD")
 
 FLOAT32 = ModbusTcpClient.DATATYPE.FLOAT32
 
-store = ModbusSlaveContext(
+store = ModbusDeviceContext(
     hr=ModbusSequentialDataBlock(0, [0] * 100),
     zero_mode=True,
 )
