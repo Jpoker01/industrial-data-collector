@@ -6,9 +6,10 @@ import threading
 from pymodbus.server import StartTcpServer
 from pymodbus.datastore import (
     ModbusSequentialDataBlock,
-    ModbusDeviceContext,
+    ModbusSlaveContext,
     ModbusServerContext,
 )
+
 from pymodbus.client import ModbusTcpClient  
 
 from common.data_source import fetch_price
@@ -25,12 +26,8 @@ PAIR = os.getenv("PAIR", "BTC-USD")
 
 FLOAT32 = ModbusTcpClient.DATATYPE.FLOAT32
 
-store = ModbusDeviceContext(
-    hr=ModbusSequentialDataBlock(0, [0] * 100),
-    zero_mode=True,
-)
-context = ModbusServerContext(store, single=True)  
-
+store = ModbusSlaveContext(hr=ModbusSequentialDataBlock(0, [0] * 100))
+context = ModbusServerContext(slaves=store, single=True)
 
 def update_registers():
     counter = 0
