@@ -6,7 +6,7 @@ import threading
 from pymodbus.server import StartTcpServer
 from pymodbus.datastore import (
     ModbusSequentialDataBlock,
-    ModbusSlaveContext,
+    ModbusDeviceContext,
     ModbusServerContext,
 )
 from pymodbus.client import ModbusTcpClient  
