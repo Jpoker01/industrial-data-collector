@@ -74,6 +74,33 @@ services:
     depends_on: [mosquitto, mongo]
     networks: [backend]
 
+  modbus-server:
+    build: ./services
+    container_name: idc-modbus-server
+    restart: unless-stopped
+    command: python -u -m modbus_server.main
+    environment:
+      PAIR: BTC-USD
+      LISTEN_HOST: "0.0.0.0"
+      LISTEN_PORT: 5020
+      UPDATE_INTERVAL: 5
+    networks: [backend]
+
+  modbus-client:
+    build: ./services
+    container_name: idc-modbus-client
+    restart: unless-stopped
+    command: python -u -m modbus_client.main
+    environment:
+      MODBUS_HOST: modbus-server
+      MODBUS_PORT: 5020
+      POLL_INTERVAL: 5
+      MONGO_URI: mongodb://mongo:27017
+      MONGO_DB: "iot"
+      MONGO_COLLECTION: "modbus_measurements"
+    networks: [backend]
+    depends_on: [modbus-server, mongo]
+
 volumes:
   mongo_data:
   postgres_data:
