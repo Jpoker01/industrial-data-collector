@@ -7,8 +7,8 @@ BROKER_HOST = os.getenv("BROKER_HOST", "localhost")
 BROKER_PORT = int(os.getenv("BROKER_PORT", "1883"))
 
 
-def publish_command(client_id, command, payload=None):
-    message = json.dumps({"command": command, **(payload or {})})
+def publish_command(client_id, command):
+    message = json.dumps({"command": command})
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     client.connect(BROKER_HOST, BROKER_PORT)
     client.loop_start()
