@@ -2,3 +2,4 @@ Django==5.2.16
 djangorestframework==3.17.1
 psycopg2-binary==2.9.12
 pymongo==4.17
+paho-mqtt==2.1.0
