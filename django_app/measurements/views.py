@@ -13,4 +13,9 @@ class MeasurementListView(APIView):
         client_id = request.query_params.get("client_id")
         limit = int(request.query_params.get("limit", 100))
         data = repo.list(source=source, client_id=client_id, limit=limit)
-        return Response(data)
+        
+        response = Response(data)
+        refresh = int(request.query_params.get("refresh", "5"))   # default 5s
+        if refresh > 0:
+            response["Refresh"] = str(refresh)
+        return response
