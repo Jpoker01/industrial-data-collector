@@ -8,8 +8,9 @@ import paho.mqtt.client as mqtt
 from common.data_source import fetch_price
 from common.broker import connect_to_broker
 
-logging.basicConfig(level=logging.INFO,
-                    format="%(asctime)s %(levelname)s %(name)s %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 CLIENT_ID = os.getenv("CLIENT_ID", "pub-1")
@@ -23,6 +24,7 @@ TOPIC = f"telemetry/{CLIENT_ID}/{TOPIC_CATEGORY}"
 COMMAND_TOPIC = f"commands/{CLIENT_ID}"
 
 publishing_enabled = True
+
 
 def on_message(client, userdata, msg):
     global publishing_enabled
@@ -68,4 +70,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    

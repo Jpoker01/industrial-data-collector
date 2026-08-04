@@ -6,8 +6,9 @@ from datetime import datetime, timezone
 from pymodbus.client import ModbusTcpClient
 from pymongo import MongoClient
 
-logging.basicConfig(level=logging.INFO,
-                    format="%(asctime)s %(levelname)s %(name)s %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 MODBUS_HOST = os.getenv("MODBUS_HOST", "localhost")
@@ -22,19 +23,21 @@ FLOAT32 = ModbusTcpClient.DATATYPE.FLOAT32
 mongo = MongoClient(MONGO_URI)
 collection = mongo[MONGO_DB][MONGO_COLLECTION]
 
+
 def connect_to_server(client):
     if not client.connect():
         logger.error("Could not reach Modbus server")
         raise SystemExit(1)
+
 
 def main():
     client = ModbusTcpClient(MODBUS_HOST, port=MODBUS_PORT)
     connect_to_server(client)
     try:
         while True:
-            #first two registers hold the price value,
-            #the third is a counter that is used to check whether the server is updating the first two values
-            result = client.read_holding_registers(0, count=3) 
+            # first two registers hold the price value,
+            # the third is a counter that is used to check whether the server is updating the first two values
+            result = client.read_holding_registers(0, count=3)
             if result.isError():
                 logger.warning("Read error: %s", result)
             else:

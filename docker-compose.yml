@@ -21,18 +21,21 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}-d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
-      timeout: 3s
-      retries: 10
+      timeout: 5s
+      retries: 15
 
   mosquitto:
     image: eclipse-mosquitto:2
     container_name: mosquitto
     restart: unless-stopped
-    ports: ["1883:1883"]
+    ports: ["8883:8883"]
     networks: ["backend"]
-    volumes: ["mosquitto_data:/mosquitto/data", "./mosquitto/config:/mosquitto/config"]
+    volumes: 
+      - "mosquitto_data:/mosquitto/data"
+      - "./mosquitto/config:/mosquitto/config"
+      - "./certs:/mosquitto/certs:ro"
 
   mqtt-pub-1:
     build: ./services
@@ -44,12 +47,15 @@ services:
       PAIR: BTC-USD
       PUBLISH_INTERVAL: "5"
       BROKER_HOST: mosquitto
-      BROKER_PORT: "1883"
+      BROKER_PORT: "8883"
       TOPIC_CATEGORY: "crypto"
       MQTT_USERNAME: publisher
       MQTT_PASSWORD: ${MQTT_PUBLISHER_PASSWORD}
+      MQTT_TLS_CA: /certs/ca.crt
     depends_on: [mosquitto]
     networks: [backend]
+    volumes:
+      - "./certs/ca.crt:/certs/ca.crt:ro"
 
   mqtt-pub-2:
     build: ./services
@@ -61,12 +67,15 @@ services:
       PAIR: ETH-USD
       PUBLISH_INTERVAL: "7"
       BROKER_HOST: mosquitto
-      BROKER_PORT: "1883"
+      BROKER_PORT: "8883"
       TOPIC_CATEGORY: "crypto"
       MQTT_USERNAME: publisher
       MQTT_PASSWORD: ${MQTT_PUBLISHER_PASSWORD}
+      MQTT_TLS_CA: /certs/ca.crt
     depends_on: [mosquitto]
     networks: [backend]
+    volumes:
+      - "./certs/ca.crt:/certs/ca.crt:ro"
 
   mqtt-ingest:
     build: ./services
@@ -75,15 +84,18 @@ services:
     command: python -u -m mqtt_ingest.main
     environment:
       BROKER_HOST: mosquitto
-      BROKER_PORT: "1883"
+      BROKER_PORT: "8883"
       MONGO_URI: mongodb://mongo:27017
       MONGO_DB: iot
       MONGO_COLLECTION: "mqtt_measurements"
       TOPIC: "telemetry/#"
       MQTT_USERNAME: ingest
       MQTT_PASSWORD: ${MQTT_INGEST_PASSWORD}
+      MQTT_TLS_CA: /certs/ca.crt
     depends_on: [mosquitto, mongo]
     networks: [backend]
+    volumes:
+      - "./certs/ca.crt:/certs/ca.crt:ro"
 
   modbus-server:
     build: ./services
@@ -93,7 +105,6 @@ services:
     environment:
       PAIR: BTC-USD
       LISTEN_HOST: "0.0.0.0"
-      LISTEN_PORT: 5020
       UPDATE_INTERVAL: 5
     networks: [backend]
 
@@ -126,9 +137,10 @@ services:
       MONGO_URI: mongodb://mongo:27017
       MONGO_DB: iot
       BROKER_HOST: mosquitto
-      BROKER_PORT: "1883"
+      BROKER_PORT: "8883"
       MQTT_USERNAME: django
       MQTT_PASSWORD: ${MQTT_DJANGO_PASSWORD}
+      MQTT_TLS_CA: /certs/ca.crt
     ports:
       - "8000:8000"
     depends_on:
@@ -139,6 +151,8 @@ services:
       postgres:
         condition: service_healthy
     networks: [backend]
+    volumes:
+      - "./certs/ca.crt:/certs/ca.crt:ro"
 
 volumes:
   mongo_data:
