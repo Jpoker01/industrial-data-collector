@@ -30,3 +30,6 @@ docker run --rm --user "$(id -u):$(id -g)" \
 
 chmod 644 "$CONFIG_DIR/passwd" "$CONFIG_DIR/aclfile"
 echo "Done. Password file: $CONFIG_DIR/passwd"
+
+echo "Generating TLS certificates..."
+bash certs/generate_certs.sh
