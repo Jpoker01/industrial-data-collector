@@ -1,0 +1,9 @@
+user publisher
+topic write telemetry/#
+topic read commands/#
+
+user ingest
+topic read telemetry/#
+
+user django
+topic write commands/#
