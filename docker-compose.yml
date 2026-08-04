@@ -15,11 +15,16 @@ services:
     restart: unless-stopped
     ports: ["5432:5432"]
     networks: ["backend"]
-    volumes: ["postgres_data:/var/lib/postgresql/data"]
+    volumes: ["postgres_data:/var/lib/postgresql"]  
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}-d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   mosquitto:
     image: eclipse-mosquitto:2
@@ -41,6 +46,8 @@ services:
       BROKER_HOST: mosquitto
       BROKER_PORT: "1883"
       TOPIC_CATEGORY: "crypto"
+      MQTT_USERNAME: publisher
+      MQTT_PASSWORD: ${MQTT_PUBLISHER_PASSWORD}
     depends_on: [mosquitto]
     networks: [backend]
 
@@ -56,6 +63,8 @@ services:
       BROKER_HOST: mosquitto
       BROKER_PORT: "1883"
       TOPIC_CATEGORY: "crypto"
+      MQTT_USERNAME: publisher
+      MQTT_PASSWORD: ${MQTT_PUBLISHER_PASSWORD}
     depends_on: [mosquitto]
     networks: [backend]
 
@@ -71,6 +80,8 @@ services:
       MONGO_DB: iot
       MONGO_COLLECTION: "mqtt_measurements"
       TOPIC: "telemetry/#"
+      MQTT_USERNAME: ingest
+      MQTT_PASSWORD: ${MQTT_INGEST_PASSWORD}
     depends_on: [mosquitto, mongo]
     networks: [backend]
 
@@ -116,9 +127,17 @@ services:
       MONGO_DB: iot
       BROKER_HOST: mosquitto
       BROKER_PORT: "1883"
+      MQTT_USERNAME: django
+      MQTT_PASSWORD: ${MQTT_DJANGO_PASSWORD}
     ports:
       - "8000:8000"
-    depends_on: [postgres, mongo, mosquitto]
+    depends_on:
+      mongo:
+        condition: service_started
+      mosquitto:
+        condition: service_started
+      postgres:
+        condition: service_healthy
     networks: [backend]
 
 volumes:
