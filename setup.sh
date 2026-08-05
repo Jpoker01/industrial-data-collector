@@ -4,12 +4,12 @@ set -e
 
 CONFIG_DIR="mosquitto/config"
 
-# Load MQTT passwords from .env
 if [ -f .env ]; then
     set -a
     . ./.env
     set +a
 fi
+
 PUB_PW="${MQTT_PUBLISHER_PASSWORD:-password}"
 ING_PW="${MQTT_INGEST_PASSWORD:-password}"
 DJ_PW="${MQTT_DJANGO_PASSWORD:-password}"

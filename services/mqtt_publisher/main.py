@@ -1,12 +1,11 @@
 import json
+import logging
 import os
 import time
-import logging
 
 import paho.mqtt.client as mqtt
-
-from common.data_source import fetch_price
 from common.broker import connect_to_broker
+from common.data_source import fetch_price
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s"
