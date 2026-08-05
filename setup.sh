@@ -4,17 +4,19 @@ set -e
 
 CONFIG_DIR="mosquitto/config"
 
+# Load MQTT passwords from .env
 if [ -f .env ]; then
     set -a
     . ./.env
     set +a
 fi
 
-PUB_PW="${MQTT_PUBLISHER_PASSWORD:-password}"
-ING_PW="${MQTT_INGEST_PASSWORD:-password}"
-DJ_PW="${MQTT_DJANGO_PASSWORD:-password}"
 
 echo "Generating Mosquitto password file..."
+
+# Drop any existing file first so a stale, unreadable one (e.g. left over
+# from an older version of this script) can't block the rewrite below.
+rm -f "$CONFIG_DIR/passwd"
 
 docker run --rm --user "$(id -u):$(id -g)" \
     -v "$(pwd)/$CONFIG_DIR:/mosquitto/config" eclipse-mosquitto:2 \
@@ -34,11 +36,9 @@ echo "Generating TLS certificates..."
 bash certs/generate_certs.sh
 
 echo "Securing Mosquitto password file and certificate permissions..."
-docker run --rm --user root \
-    -v "$(pwd)/mosquitto/config:/mosquitto/config" \
-    -v "$(pwd)/certs:/mosquitto/certs" \
-    eclipse-mosquitto:2 \
-    sh -c "chown 8883:8883 /mosquitto/config/passwd /mosquitto/certs/server.key && \
-           chmod 0600 /mosquitto/config/passwd /mosquitto/certs/server.key"
-           
+# Keep these files owned by you (not a container-internal uid) so this repo
+# stays writable without sudo; just open read access to "other" so the
+# broker's own in-container user can still read them.
+chmod 0644 "$CONFIG_DIR/passwd" certs/server.key
+
 echo "Setup complete!"
