@@ -25,6 +25,7 @@ PAIR = os.getenv("PAIR", "BTC-USD")
 TOPIC_CATEGORY = os.getenv("TOPIC_CATEGORY", "crypto")
 TOPIC = f"telemetry/{CLIENT_ID}/{TOPIC_CATEGORY}"
 
+
 COMMAND_TOPIC = f"commands/{CLIENT_ID}"
 
 publishing_enabled = True

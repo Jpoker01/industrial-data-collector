@@ -14,11 +14,11 @@ class MeasurementListView(APIView):
     """Returns JSON measurements that can be queried through pymongo"""
 
     def get(self, request) -> Response:
-        source = request.query_params.get("source")
+        protocol = request.query_params.get("protocol")
         client_id = request.query_params.get("client_id")
         limit = int(request.query_params.get("limit", 100))
 
-        data = repo.list(source=source, client_id=client_id, limit=limit)
+        data = repo.list(protocol=protocol, client_id=client_id, limit=limit)
         response = Response(data)
 
         refresh = int(request.query_params.get("refresh", "5"))

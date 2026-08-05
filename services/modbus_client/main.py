@@ -50,7 +50,7 @@ def main():
                 price = client.convert_from_registers(result.registers[0:2], FLOAT32)
                 counter = result.registers[2]
                 document = {
-                    "source": "modbus",
+                    "protocol": "modbus",
                     "registers": result.registers,
                     "price": price,
                     "counter": counter,

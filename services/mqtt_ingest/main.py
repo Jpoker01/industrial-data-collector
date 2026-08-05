@@ -35,7 +35,7 @@ def create_on_message_callback(collection):
             return
 
         document = {
-            "source": "mqtt",
+            "protocol": "mqtt",
             "topic": msg.topic,
             "pair": payload.get("pair"),
             "price": payload.get("price"),

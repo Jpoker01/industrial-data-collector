@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 MQTT_USERNAME = os.getenv("MQTT_USERNAME")
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD")
-MQTT_TLS_CA = os.getenv("MQTT_TLS_CA")
+MQTT_TLS_CA = os.getenv("MQTT_TLS_CA", "/certs/ca.crt")
 
 
 def connect_to_broker(client: mqtt.Client, host: str, port: int) -> None:

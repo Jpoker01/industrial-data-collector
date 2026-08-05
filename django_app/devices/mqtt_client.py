@@ -11,7 +11,7 @@ BROKER_HOST = os.getenv("BROKER_HOST", "localhost")
 BROKER_PORT = int(os.getenv("BROKER_PORT", "1883"))
 MQTT_USERNAME = os.getenv("MQTT_USERNAME")
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD")
-MQTT_TLS_CA = os.getenv("MQTT_TLS_CA")
+MQTT_TLS_CA = os.getenv("MQTT_TLS_CA", "/certs/ca.crt")
 
 
 def publish_command(client_id: int, command: str) -> None:

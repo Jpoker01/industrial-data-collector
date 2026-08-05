@@ -31,7 +31,7 @@ class MeasurementRepository:
         Retrieves recent measurements stored by time
 
         Args:
-            source: Which protocol to use
+            protocol: Which protocol to use
             client_id: Which client to get measurements from
             limit: Maximum number of documents to return
 
@@ -40,7 +40,7 @@ class MeasurementRepository:
 
         """
 
-        # pick collections: one if source given, both otherwise
+        # pick collections: one if protocol given, both otherwise
         names = (
             [COLLECTIONS[protocol]]
             if protocol in COLLECTIONS
