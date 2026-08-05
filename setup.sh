@@ -28,8 +28,17 @@ docker run --rm --user "$(id -u):$(id -g)" \
     -v "$(pwd)/$CONFIG_DIR:/mosquitto/config" eclipse-mosquitto:2 \
     mosquitto_passwd -b /mosquitto/config/passwd django "$DJ_PW"
 
-chmod 644 "$CONFIG_DIR/passwd" "$CONFIG_DIR/aclfile"
 echo "Done. Password file: $CONFIG_DIR/passwd"
 
 echo "Generating TLS certificates..."
 bash certs/generate_certs.sh
+
+echo "Securing Mosquitto password file and certificate permissions..."
+docker run --rm --user root \
+    -v "$(pwd)/mosquitto/config:/mosquitto/config" \
+    -v "$(pwd)/certs:/mosquitto/certs" \
+    eclipse-mosquitto:2 \
+    sh -c "chown 1883:1883 /mosquitto/config/passwd /mosquitto/certs/server.key && \
+           chmod 0600 /mosquitto/config/passwd /mosquitto/certs/server.key"
+           
+echo "Setup complete!"
