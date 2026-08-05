@@ -33,6 +33,7 @@ class Command(models.Model):
         Device, on_delete=models.CASCADE, related_name="commands"
     )
     command = models.CharField(max_length=32)
+    published = models.BooleanField(default=False)
     payload = models.JSONField(default=dict, blank=True)
     issued_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL
