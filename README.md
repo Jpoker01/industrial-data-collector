@@ -34,7 +34,7 @@ The following instructions have to explicitly followed to prevent any issues whe
 
 1. **Clone the repository** 
 ```bash
-git clone [https://github.com/Jpoker01/industrial-data-collector.git](https://github.com/Jpoker01/industrial-data-collector.git)
+git clone https://github.com/Jpoker01/industrial-data-collector.git
 cd industrial-data-collector
 ```
 
@@ -72,12 +72,7 @@ docker-compose exec django python manage.py test
 
 ## Project structure
 
-The work can be broken into two main parts:
-* **Experiments** - All of the Jupyter notebooks where different methods of AI are utilized and experimented with to find the optimal solution
-* **Web application** - The web application where a chosen authorship verification model is deployed and where the user can verify the authorship of two texts.
-
-### Experiments (`/experiments`)
-Lists all the experiments done for this diploma thesis.
+The project structure is as follows:  
 
  * **certs** - Folder where TLS security files are stored upon set-up
  * **/django** - Django API application
