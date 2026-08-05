@@ -15,7 +15,10 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+db.sqlite3
+*.log
 
 
-# vscode metadata
+# vscode and os metadata
 .vscode/
+.DS_Store

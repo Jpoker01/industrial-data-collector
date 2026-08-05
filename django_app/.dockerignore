@@ -1,3 +1,18 @@
-.venv/
+# Python caches and environments
 __pycache__/
-*.pyc
+*.py[cod]
+*~
+.venv/
+venv/
+
+# Secrets
+.env
+
+# Testing artifacts
+.pytest_cache/
+htmlcov/
+.coverage
+
+# IDE & OS
+.vscode/
+.DS_Store
