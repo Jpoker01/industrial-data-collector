@@ -1,13 +1,16 @@
-from django.shortcuts import render
-
-from rest_framework.views import APIView
+"""
+REST API view rendering MongoDB time-series measurement data as JSON responses.
+"""
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .repository import MeasurementRepository
 
 repo = MeasurementRepository()
 
 
 class MeasurementListView(APIView):
+    """Returns JSON measurements that can be queried through pymongo"""
     def get(self, request):
         source = request.query_params.get("source")
         client_id = request.query_params.get("client_id")
