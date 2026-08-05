@@ -1,18 +1,17 @@
-import os
-import time
+"""Modbus TCP server simulating an industrial device register map"""
 import logging
+import os
 import threading
-
-from pymodbus.server import StartTcpServer
-from pymodbus.datastore import (
-    ModbusSequentialDataBlock,
-    ModbusSlaveContext,
-    ModbusServerContext,
-)
-
-from pymodbus.client import ModbusTcpClient
+import time
 
 from common.data_source import fetch_price
+from pymodbus.client import ModbusTcpClient
+from pymodbus.datastore import (
+    ModbusSequentialDataBlock,
+    ModbusServerContext,
+    ModbusSlaveContext,
+)
+from pymodbus.server import StartTcpServer
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s"
@@ -24,14 +23,13 @@ LISTEN_PORT = int(os.getenv("LISTEN_PORT", "5020"))
 UPDATE_INTERVAL = int(os.getenv("UPDATE_INTERVAL", "5"))
 PAIR = os.getenv("PAIR", "BTC-USD")
 
-
 FLOAT32 = ModbusTcpClient.DATATYPE.FLOAT32
 
 store = ModbusSlaveContext(hr=ModbusSequentialDataBlock(0, [0] * 100))
 context = ModbusServerContext(slaves=store, single=True)
 
-
-def update_registers():
+def update_registers() -> None:
+    """Periodically fetch external price data and update Modbus holding registers"""
     counter = 0
     while True:
         reading = fetch_price(PAIR)
@@ -48,13 +46,10 @@ def update_registers():
 
 
 def main():
-    # thread that updates registry values in UPDATE_INTERVAL
-    # daemon=True - this thread gets killed if the main program is
+    """Start backgroun worker thread and launch the Modbus server"""
     threading.Thread(target=update_registers, daemon=True).start()
     logger.info("Starting Modbus TCP server on %s:%s", LISTEN_HOST, LISTEN_PORT)
-    StartTcpServer(
-        context=context, address=(LISTEN_HOST, LISTEN_PORT)
-    )  # main server that answers clients
+    StartTcpServer(context=context, address=(LISTEN_HOST, LISTEN_PORT))
 
 
 if __name__ == "__main__":
