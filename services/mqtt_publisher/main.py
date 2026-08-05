@@ -12,7 +12,8 @@ from common.broker import connect_to_broker
 from common.data_source import fetch_price
 
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s"
+    level=logging.INFO, 
+    format="%(asctime)s %(levelname)s %(name)s %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -27,7 +28,6 @@ TOPIC = f"telemetry/{CLIENT_ID}/{TOPIC_CATEGORY}"
 COMMAND_TOPIC = f"commands/{CLIENT_ID}"
 
 publishing_enabled = True
-
 
 def on_message(client, userdata, msg):
     """Callback function for receiving control commands"""
@@ -48,8 +48,10 @@ def on_message(client, userdata, msg):
 
 
 def main():
+    """Main execution loop for MQTT publisher."""
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=CLIENT_ID)
     client.on_message = on_message
+
     connect_to_broker(client, BROKER_HOST, BROKER_PORT)
     client.subscribe(COMMAND_TOPIC)
     client.loop_start()
@@ -63,14 +65,13 @@ def main():
                 else:
                     payload = json.dumps(reading)
                     client.publish(TOPIC, payload)
-                    logger.info("Published: %s", payload)
+                    logger.info("Published to %s: %s", TOPIC, payload)
             time.sleep(PUBLISH_INTERVAL)
     except KeyboardInterrupt:
         logger.info("Stopping")
     finally:
         client.loop_stop()
         client.disconnect()
-
 
 if __name__ == "__main__":
     main()
