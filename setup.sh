@@ -33,5 +33,6 @@ bash certs/generate_certs.sh
 
 echo "Securing Mosquitto password file and certificate permissions..."
 chmod 0644 "$CONFIG_DIR/passwd" certs/server.key
+docker run --rm -v "$(pwd)/mosquitto/config:/mosquitto/config" alpine sh -c "chown 1883:1883 /mosquitto/config/passwd && chmod 0700 /mosquitto/config/passwd"
 
 echo "Setup complete!"
