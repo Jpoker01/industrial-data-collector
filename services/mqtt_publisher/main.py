@@ -1,3 +1,7 @@
+"""
+MQTT Publisher service fetching live API data and publishing to Mosquitto broker
+"""
+
 import json
 import logging
 import os
@@ -26,6 +30,7 @@ publishing_enabled = True
 
 
 def on_message(client, userdata, msg):
+    """Callback function for receiving control commands"""
     global publishing_enabled
     try:
         command = json.loads(msg.payload.decode()).get("command")

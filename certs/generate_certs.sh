@@ -3,8 +3,6 @@
 
 set -e
 cd "$(dirname "$0")"
-
-# Start clean so re-running this script always works, even over stale files.
 rm -f ca.key ca.crt server.key server.crt server.csr ca.srl
 
 openssl req -new -x509 -days 3650 -nodes -keyout ca.key -out ca.crt -subj "/CN=idc-ca"

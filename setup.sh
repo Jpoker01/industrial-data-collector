@@ -1,21 +1,17 @@
 #!/usr/bin/env bash
-# Generates the Mosquitto password file from the credentials in .env.
+# Generates the Mosquitto password files from the credentials in .env & implement tls for mosquitto
 set -e
 
 CONFIG_DIR="mosquitto/config"
 
-# Load MQTT passwords from .env
 if [ -f .env ]; then
     set -a
     . ./.env
     set +a
 fi
 
-
 echo "Generating Mosquitto password file..."
 
-# Drop any existing file first so a stale, unreadable one (e.g. left over
-# from an older version of this script) can't block the rewrite below.
 rm -f "$CONFIG_DIR/passwd"
 
 docker run --rm --user "$(id -u):$(id -g)" \
@@ -36,9 +32,6 @@ echo "Generating TLS certificates..."
 bash certs/generate_certs.sh
 
 echo "Securing Mosquitto password file and certificate permissions..."
-# Keep these files owned by you (not a container-internal uid) so this repo
-# stays writable without sudo; just open read access to "other" so the
-# broker's own in-container user can still read them.
 chmod 0644 "$CONFIG_DIR/passwd" certs/server.key
 
 echo "Setup complete!"
