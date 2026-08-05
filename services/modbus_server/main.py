@@ -1,4 +1,7 @@
-"""Modbus TCP server simulating an industrial device register map"""
+"""
+Modbus TCP server simulating an industrial device register map
+"""
+
 import logging
 import os
 import threading
@@ -27,6 +30,7 @@ FLOAT32 = ModbusTcpClient.DATATYPE.FLOAT32
 
 store = ModbusSlaveContext(hr=ModbusSequentialDataBlock(0, [0] * 100))
 context = ModbusServerContext(slaves=store, single=True)
+
 
 def update_registers() -> None:
     """Periodically fetch external price data and update Modbus holding registers"""

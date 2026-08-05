@@ -1,6 +1,10 @@
+"""
+Modbus client for ingesting the registry data and storing them in MongoDB collection
+"""
+
+import logging
 import os
 import time
-import logging
 from datetime import datetime, timezone
 
 from pymodbus.client import ModbusTcpClient
@@ -20,23 +24,25 @@ MONGO_COLLECTION = os.getenv("MONGO_COLLECTION", "modbus_measurements")
 
 FLOAT32 = ModbusTcpClient.DATATYPE.FLOAT32
 
-mongo = MongoClient(MONGO_URI)
-collection = mongo[MONGO_DB][MONGO_COLLECTION]
 
-
-def connect_to_server(client):
+def connect_to_modbus_server(client: ModbusTcpClient) -> None:
+    """Connect to Modbus server"""
     if not client.connect():
         logger.error("Could not reach Modbus server")
         raise SystemExit(1)
 
 
 def main():
+    """Main execution loop for Modbus ingest client"""
+
     client = ModbusTcpClient(MODBUS_HOST, port=MODBUS_PORT)
-    connect_to_server(client)
+    connect_to_modbus_server(client)
+
+    mongo = MongoClient(MONGO_URI)
+    collection = mongo[MONGO_DB][MONGO_COLLECTION]
+
     try:
         while True:
-            # first two registers hold the price value,
-            # the third is a counter that is used to check whether the server is updating the first two values
             result = client.read_holding_registers(0, count=3)
             if result.isError():
                 logger.warning("Read error: %s", result)
@@ -51,7 +57,9 @@ def main():
                     "received_at": datetime.now(timezone.utc),
                 }
                 collection.insert_one(document)
-                logger.info("Stored price=%s counter=%s", price, counter)
+                logger.info(
+                    "Stored Modbus measurement: price=%s counter=%s", price, counter
+                )
             time.sleep(POLL_INTERVAL)
     finally:
         client.close()

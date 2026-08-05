@@ -1,4 +1,6 @@
-"""Client for ingesting data from the Mosquitto broker to MongoDB database"""
+"""
+Client for ingesting data from the Mosquitto broker to MongoDB database
+"""
 
 import json
 import logging
