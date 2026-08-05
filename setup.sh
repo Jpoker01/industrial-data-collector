@@ -38,7 +38,7 @@ docker run --rm --user root \
     -v "$(pwd)/mosquitto/config:/mosquitto/config" \
     -v "$(pwd)/certs:/mosquitto/certs" \
     eclipse-mosquitto:2 \
-    sh -c "chown 1883:1883 /mosquitto/config/passwd /mosquitto/certs/server.key && \
+    sh -c "chown 8883:8883 /mosquitto/config/passwd /mosquitto/certs/server.key && \
            chmod 0600 /mosquitto/config/passwd /mosquitto/certs/server.key"
            
 echo "Setup complete!"
