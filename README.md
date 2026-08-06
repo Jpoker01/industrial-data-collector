@@ -76,15 +76,15 @@ docker-compose exec django python manage.py test
 
 The project structure is as follows:  
 
- * **certs** - Folder where TLS security files are stored upon set-up
- * **/django** - Django API application
-   * **/config** - Config of the full app
-   * **/devices** - Logic for devices and commands functionality
-   * **measurements** - Logic for obtaining measurements
- * **mosquitto/conf** - Stores configuration for Mosquitto and hashed passwords for clients upon setup
- * **/services** - Final analysis documents
-   * **/common** - Shared connection code for mqtt clients
-  * **/mqtt_publisher** - Codebase for MQTT clients publishing data to Mosquitto
-   * **/mqtt_ingest** - Codebase for MQTT clients ingesting data and storing it into MongoDB
-   * **/modbus_server** - Modbus code simulating industrial registers
-   * **/modbus_client** - Modbus client code for obtaning data from the modbus server and storing it into MongoDB
+ * **certs/** - Folder where TLS security files are stored upon set-up
+ * **/django/** - Django API application
+   * **/config/** - Config of the full app
+   * **/devices/** - Logic for devices and commands functionality
+   * **/measurements/** - Logic for obtaining measurements
+ * **/mosquitto/conf/** - Stores configuration for Mosquitto and hashed passwords for clients upon setup
+ * **/services/** - Final analysis documents
+   * **/common/** - Shared connection code for mqtt clients
+  * **/mqtt_publisher/** - Codebase for MQTT clients publishing data to Mosquitto
+   * **/mqtt_ingest/** - Codebase for MQTT clients ingesting data and storing it into MongoDB
+   * **/modbus_server/** - Modbus code simulating industrial registers
+   * **/modbus_client/** - Modbus client code for obtaning data from the modbus server and storing it into MongoDB
