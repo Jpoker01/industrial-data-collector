@@ -2,6 +2,8 @@
 
 This project features a IoT telemetry system utilizing MQTT and Modbus TCP data pipelines. 
 This backend application collects sensor data, stores telemetry in MongoDB, manages device metadata in PostgreSQL, and serves everything through a Django REST API. The application is fully containerized using Docker.  
+
+  
 **Built as a technical assignment**
 
 <img width="1536" height="1024" alt="diagram" src="https://github.com/user-attachments/assets/8169a8e7-c41a-4663-827c-2fb00bc5a4d2" />
